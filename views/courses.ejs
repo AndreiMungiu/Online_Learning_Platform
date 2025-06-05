@@ -2,13 +2,13 @@
 
 <div class="container">
   <h1>Available Courses</h1>
-  <input type="text" id="search" placeholder="Search courses..." />
+  <input type="text" id="search" placeholder="Search courses by tutor..." />
 
   <div class="cards-grid" id="course-list">
     <% courses.forEach(course => { %>
       <div class="card">
         <h2><%= course.name %></h2>
-        <p><strong>Instructor:</strong> <%= course.instructor %></p>
+        <p><strong>Tutor:</strong> <%= course.tutor %></p>
         <p><strong>Duration:</strong> <%= course.duration %></p>
       </div>
     <% }) %>
@@ -27,13 +27,14 @@
       .then(courses => {
         courseList.innerHTML = '';
         courses.forEach(course => {
-          courseList.innerHTML += `
-            <div class="card">
-              <h2>${course.name}</h2>
-              <p><strong>Instructor:</strong> ${course.instructor}</p>
-              <p><strong>Duration:</strong> ${course.duration}</p>
-            </div>
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h2>${course.name}</h2>
+            <p><strong>Tutor:</strong> ${course.tutor}</p>
+            <p><strong>Duration:</strong> ${course.duration}</p>
           `;
+          courseList.appendChild(card);
         });
       });
   });
