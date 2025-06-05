@@ -10,14 +10,21 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const db = new sqlite3.Database('./db.sqlite');
 
+// View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Middleware
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 // Routes
+
+// Home page
 app.get('/', (req, res) => res.render('index'));
 
+// Courses page
 app.get('/courses', (req, res) => {
   db.all('SELECT * FROM courses', [], (err, rows) => {
     if (err) return res.status(500).send('Database error');
@@ -25,6 +32,7 @@ app.get('/courses', (req, res) => {
   });
 });
 
+// Tutors page (formerly instructors)
 app.get('/instructors', (req, res) => {
   db.all('SELECT * FROM instructors', [], (err, rows) => {
     if (err) return res.status(500).send('Database error');
@@ -32,6 +40,7 @@ app.get('/instructors', (req, res) => {
   });
 });
 
+// Events page
 app.get('/events', (req, res) => {
   db.all('SELECT * FROM events', [], (err, rows) => {
     if (err) return res.status(500).send('Database error');
@@ -39,6 +48,7 @@ app.get('/events', (req, res) => {
   });
 });
 
+// FAQ page
 app.get('/faq', (req, res) => {
   db.all('SELECT * FROM faq', [], (err, rows) => {
     if (err) return res.status(500).send('Database error');
@@ -46,8 +56,10 @@ app.get('/faq', (req, res) => {
   });
 });
 
+// Contact page (GET)
 app.get('/contact', (req, res) => res.render('contact', { submitted: false }));
 
+// Contact form submission (POST)
 app.post('/contact', (req, res) => {
   const { name, email, message } = req.body;
   db.run('INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)',
@@ -58,6 +70,7 @@ app.post('/contact', (req, res) => {
     });
 });
 
+// Quiz and Match Game
 app.get('/quiz', (req, res) => res.render('quiz'));
 app.get('/match-game', (req, res) => res.render('match-game'));
 
@@ -70,7 +83,7 @@ app.get('/search-courses', (req, res) => {
   });
 });
 
-// AJAX filter for instructors
+// AJAX filter for tutors (formerly instructors)
 app.get('/search-instructors', (req, res) => {
   const search = `%${req.query.q || ''}%`;
   db.all('SELECT * FROM instructors WHERE subjects LIKE ?', [search], (err, rows) => {
@@ -79,5 +92,6 @@ app.get('/search-instructors', (req, res) => {
   });
 });
 
+// Start the server
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
