@@ -1,0 +1,49 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <h1> Contact Us</h1>
+  <p>If you have any questions or feedback, feel free to send us a message using the form below.</p>
+
+  <form action="/contact" method="POST">
+    <div class="card">
+      <label for="name">Your Name:</label>
+      <input type="text" name="name" id="name" required>
+
+      <label for="email">Your Email:</label>
+      <input type="email" name="email" id="email" required>
+
+      <label for="message">Your Message:</label>
+      <textarea name="message" id="message" rows="5" required></textarea>
+
+      <input type="submit" value="Send Message">
+    </div>
+  </form>
+
+  <% if (submitted) { %>
+    <p style="color: green;">✅ Your message has been received. Thank you!</p>
+  <% } %>
+</div>
+
+<script>
+  document.querySelector('form').addEventListener('submit', function (e) {
+    const name = document.getElementById('name');
+    const email = document.getElementById('email');
+    const message = document.getElementById('message');
+
+    // Email validation regex
+    const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+    let errors = [];
+
+    if (!name.value.trim()) errors.push("Name is required.");
+    if (!email.value.trim() || !emailPattern.test(email.value)) errors.push("Valid email is required.");
+    if (!message.value.trim()) errors.push("Message is required.");
+
+    if (errors.length > 0) {
+      e.preventDefault(); // stop form submission
+      alert("Please fix the following:\n\n" + errors.join("\n"));
+    }
+  });
+</script>
+
+<%- include('partials/footer') %>

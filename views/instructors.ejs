@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <h1> Meet Our Instructors</h1>
+  <p>Filter instructors by subject:</p>
+
+  <select id="subjectFilter">
+    <option value="">All Subjects</option>
+    <option value="HTML">HTML</option>
+    <option value="CSS">CSS</option>
+    <option value="JavaScript">JavaScript</option>
+    <option value="Python">Python</option>
+    <option value="React">React</option>
+    <option value="SQL">SQL</option>
+    <option value="Flask">Flask</option>
+  </select>
+
+  <div class="cards-grid" id="instructor-list">
+    <% instructors.forEach(instr => { %>
+      <div class="card">
+        <h2><%= instr.name %></h2>
+        <p><strong>Bio:</strong> <%= instr.bio %></p>
+        <p><strong>Subjects:</strong> <%= instr.subjects %></p>
+        <p><strong>Contact:</strong> <a href="mailto:<%= instr.contact %>"><%= instr.contact %></a></p>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+  const subjectFilter = document.getElementById('subjectFilter');
+  const list = document.getElementById('instructor-list');
+
+  subjectFilter.addEventListener('change', () => {
+    const subject = subjectFilter.value;
+
+    fetch(`/search-instructors?q=${encodeURIComponent(subject)}`)
+      .then(res => res.json())
+      .then(data => {
+        list.innerHTML = '';
+        if (data.length === 0) {
+          list.innerHTML = '<p>No instructors found for this subject.</p>';
+          return;
+        }
+
+        data.forEach(instr => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h2>${instr.name}</h2>
+            <p><strong>Bio:</strong> ${instr.bio}</p>
+            <p><strong>Subjects:</strong> ${instr.subjects}</p>
+            <p><strong>Contact:</strong> <a href="mailto:${instr.contact}">${instr.contact}</a></p>
+          `;
+          list.appendChild(card);
+        });
+      });
+  });
+</script>
+
+<%- include('partials/footer') %>

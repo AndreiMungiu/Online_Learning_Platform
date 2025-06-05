@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <h1>🎯 Guess the Course</h1>
+  <p><strong>Which course is taught by <span id="instructorName">Alice Johnson</span>?</strong></p>
+
+  <div id="options">
+    <button class="option-btn">Intro to Web Development</button>
+    <button class="option-btn">Python for Beginners</button>
+    <button class="option-btn">Database Design Basics</button>
+  </div>
+
+  <p id="result" style="margin-top:20px; font-weight: bold;"></p>
+</div>
+
+<script>
+  const correctAnswer = "Intro to Web Development";
+
+  document.querySelectorAll(".option-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.textContent === correctAnswer) {
+        document.getElementById("result").textContent = "✅ Correct!";
+        document.getElementById("result").style.color = "green";
+      } else {
+        document.getElementById("result").textContent = "❌ Incorrect. Try again!";
+        document.getElementById("result").style.color = "red";
+      }
+    });
+  });
+</script>
+
+<%- include('partials/footer') %>

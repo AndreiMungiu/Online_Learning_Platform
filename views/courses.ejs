@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<div class="container">
+  <h1>Available Courses</h1>
+  <input type="text" id="search" placeholder="Search courses..." />
+
+  <div class="cards-grid" id="course-list">
+    <% courses.forEach(course => { %>
+      <div class="card">
+        <h2><%= course.name %></h2>
+        <p><strong>Instructor:</strong> <%= course.instructor %></p>
+        <p><strong>Duration:</strong> <%= course.duration %></p>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+  const searchBox = document.getElementById('search');
+  const courseList = document.getElementById('course-list');
+
+  searchBox.addEventListener('input', () => {
+    const query = searchBox.value;
+
+    fetch(`/search-courses?q=${encodeURIComponent(query)}`)
+      .then(res => res.json())
+      .then(courses => {
+        courseList.innerHTML = '';
+        courses.forEach(course => {
+          courseList.innerHTML += `
+            <div class="card">
+              <h2>${course.name}</h2>
+              <p><strong>Instructor:</strong> ${course.instructor}</p>
+              <p><strong>Duration:</strong> ${course.duration}</p>
+            </div>
+          `;
+        });
+      });
+  });
+</script>
+
+<%- include('partials/footer') %>
