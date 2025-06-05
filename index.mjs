@@ -1,0 +1,83 @@
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import sqlite3 from 'sqlite3';
+import bodyParser from 'body-parser';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const db = new sqlite3.Database('./db.sqlite');
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Routes
+app.get('/', (req, res) => res.render('index'));
+
+app.get('/courses', (req, res) => {
+  db.all('SELECT * FROM courses', [], (err, rows) => {
+    if (err) return res.status(500).send('Database error');
+    res.render('courses', { courses: rows });
+  });
+});
+
+app.get('/instructors', (req, res) => {
+  db.all('SELECT * FROM instructors', [], (err, rows) => {
+    if (err) return res.status(500).send('Database error');
+    res.render('instructors', { instructors: rows });
+  });
+});
+
+app.get('/events', (req, res) => {
+  db.all('SELECT * FROM events', [], (err, rows) => {
+    if (err) return res.status(500).send('Database error');
+    res.render('events', { events: rows });
+  });
+});
+
+app.get('/faq', (req, res) => {
+  db.all('SELECT * FROM faq', [], (err, rows) => {
+    if (err) return res.status(500).send('Database error');
+    res.render('faq', { faq: rows });
+  });
+});
+
+app.get('/contact', (req, res) => res.render('contact', { submitted: false }));
+
+app.post('/contact', (req, res) => {
+  const { name, email, message } = req.body;
+  db.run('INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)',
+    [name, email, message],
+    err => {
+      if (err) return res.status(500).send('Failed to save message.');
+      res.render('contact', { submitted: true });
+    });
+});
+
+app.get('/quiz', (req, res) => res.render('quiz'));
+app.get('/match-game', (req, res) => res.render('match-game'));
+
+// AJAX search for courses
+app.get('/search-courses', (req, res) => {
+  const search = `%${req.query.q || ''}%`;
+  db.all('SELECT * FROM courses WHERE name LIKE ?', [search], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Search failed' });
+    res.json(rows);
+  });
+});
+
+// AJAX filter for instructors
+app.get('/search-instructors', (req, res) => {
+  const search = `%${req.query.q || ''}%`;
+  db.all('SELECT * FROM instructors WHERE subjects LIKE ?', [search], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Search failed' });
+    res.json(rows);
+  });
+});
+
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

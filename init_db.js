@@ -1,0 +1,83 @@
+const sqlite3 = require('sqlite3').verbose(); 
+const db = new sqlite3.Database('./db.sqlite');
+
+db.serialize(() => {
+  // Create tables
+  db.run(`CREATE TABLE IF NOT EXISTS courses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    instructor TEXT,
+    duration TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS instructors (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    bio TEXT,
+    subjects TEXT,
+    contact TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    date TEXT,
+    time TEXT,
+    description TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS contacts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    email TEXT,
+    message TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS faq (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    question TEXT,
+    answer TEXT
+  )`);
+
+  // Sample data
+  db.run(`INSERT INTO courses (name, instructor, duration)
+          VALUES ('Intro to Web Development', 'Alice Johnson', '6 weeks')`);
+
+  db.run(`INSERT INTO courses (name, instructor, duration)
+          VALUES ('JavaScript for Beginners', 'Bob Smith', '4 weeks')`);
+
+  db.run(`INSERT INTO courses (name, instructor, duration)
+          VALUES ('Frontend Frameworks', 'Sara Ahmed', '5 weeks')`);
+
+  db.run(`INSERT INTO courses (name, instructor, duration)
+          VALUES ('Database Design Basics', 'Mark Lee', '3 weeks')`);
+
+  db.run(`INSERT INTO courses (name, instructor, duration)
+          VALUES ('Python for Beginners', 'Jane Doe', '6 weeks')`);
+
+  db.run(`INSERT INTO instructors (name, bio, subjects, contact)
+          VALUES ('Alice Johnson', 'Web developer with 10 years experience', 'HTML, CSS, JavaScript', 'alice@example.com')`);
+
+  db.run(`INSERT INTO instructors (name, bio, subjects, contact)
+          VALUES ('Bob Smith', 'Software engineer and educator', 'Node.js, SQL, Express', 'bob@example.com')`);
+
+  db.run(`INSERT INTO instructors (name, bio, subjects, contact)
+          VALUES ('Sara Ahmed', 'Front-end developer and UI designer.', 'HTML, CSS, React', 'sara@example.com')`);
+
+  db.run(`INSERT INTO instructors (name, bio, subjects, contact)
+          VALUES ('Mark Lee', 'Database engineer with a focus on SQL optimization.', 'SQL, SQLite, Database Design', 'mark@example.com')`);
+
+  db.run(`INSERT INTO instructors (name, bio, subjects, contact)
+          VALUES ('Jane Doe', 'Software engineer passionate about education and Python.', 'Python, Flask', 'jane@example.com')`);
+
+  db.run(`INSERT INTO faq (question, answer)
+          VALUES ('What courses do you offer?', 'We offer a variety of web development courses including HTML, CSS, JavaScript, and Python.')`);
+
+  db.run(`INSERT INTO faq (question, answer)
+          VALUES ('How do I contact an instructor?', 'Instructor contact details are listed on their profiles.')`);
+
+  db.run(`INSERT INTO faq (question, answer)
+          VALUES ('Can I join multiple courses?', 'Yes, you can enroll in as many courses as you like.')`);
+});
+
+db.close();
